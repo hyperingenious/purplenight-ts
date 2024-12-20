@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import { Storage, Databases, Client, ID, Query, QueryTypes } from 'node-appwrite'
-import { InputFile } from 'node-appwrite/dist/inputFile'
+import { InputFile, Storage, Databases, Client, ID, Query, Models } from 'node-appwrite'
 import * as crypto from 'crypto'
 
 let APPWRITE_CLOUD_URL = process.env.APPWRITE_CLOUD_URL || '';
@@ -41,7 +40,7 @@ async function upload_file_with_url(url: string) {
     }
 }
 
-async function get_all_chunk_ids_with_book_id(book_id: QueryTypes): Promise<string[] | Error> {
+async function get_all_chunk_ids_with_book_id(book_id: any): Promise<string[]> {
     try {
         const { total, documents } = await databases.listDocuments(
             DATABASE_ID,
@@ -58,7 +57,7 @@ async function get_all_chunk_ids_with_book_id(book_id: QueryTypes): Promise<stri
     }
 }
 
-async function get_chunk_by_id(chunk_id: string) {
+async function get_chunk_by_id(chunk_id: string): Promise<any> {
     try {
         const response = await databases.getDocument(
             DATABASE_ID,
@@ -203,7 +202,7 @@ async function get_all_blog_ids_match_book_id(id: string) {
             [Query.equal("books", id), Query.limit(300)]
         );
 
-        if (total == 0) return;
+        if (total == 0) throw Error;
 
         return documents.map((ddata) => ddata.$id);
     } catch (error) {
@@ -233,7 +232,7 @@ async function delete_file_by_id(el: string) {
 
 async function get_book_document_by_id(el: string) {
     try {
-        const doc = await databases.getDocument(
+        const doc: any = await databases.getDocument(
             DATABASE_ID,
             BOOKS_COLLECTION_ID,
             el
@@ -267,7 +266,7 @@ async function add_deletion_entry({ file_id, chunk_id_array, blog_id_array }: { 
     }
 }
 
-async function get_all_deletion_entries() {
+async function get_all_deletion_entries(): Promise<Models.Document[]> {
     try {
         const { documents } = await databases.listDocuments(
             DATABASE_ID,
