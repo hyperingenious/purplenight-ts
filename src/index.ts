@@ -33,6 +33,8 @@ setInterval(() => {
 // Initialize application
 startup();
 
+console.log(__dirname);
+
 // CORS configuration
 const allowedOrigins = [
     "http://localhost:3000",
